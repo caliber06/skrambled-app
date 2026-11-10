@@ -36,8 +36,10 @@ final class TodoItem {
     var dueDate: Date?
     var hasSpecificTime: Bool;
     
-    var isCompleted: Bool = false
-    var completedDate: Date? = nil
+    var isCompleted: Bool = false;
+    var completedDate: Date? = nil;
+    
+    var isArchived: Bool = false;
     
     var expirationDays: Int? //move to Past Tasks
     var deletionDays: Int? //fully delete the task
@@ -64,6 +66,8 @@ final class TodoItem {
         self.isCompleted = false;
         self.completedDate = nil;
         
+        self.isArchived = false;
+        
         self.expirationDays = 15;
         self.deletionDays = 30;
     }
@@ -71,6 +75,8 @@ final class TodoItem {
     func CompleteTask(){
         self.isCompleted = true;
         self.completedDate = Date()
+        
+        self.isArchived = true;
     }
     
     func GetPriorityColor() -> Color{

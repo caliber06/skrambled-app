@@ -17,7 +17,8 @@ struct EditTaskView : View {
             }
             
             Section("Notes"){
-                TextField("", text: $currentTask.notes)
+                TextEditor(text: $currentTask.notes)
+                    .frame(height: 100)
             }
             
             Section("Priority") {

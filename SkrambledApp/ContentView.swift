@@ -8,7 +8,7 @@ struct ContentView: View {
     private var tasks: [TodoItem]; //array of TodoItems
     
     private var sortedTasks: [TodoItem] {
-        tasks.filter{!$0.isCompleted}
+        tasks.filter{!$0.isCompleted || !$0.isArchived}
             .sorted { first, second in
             
             //first sort by priority
@@ -34,6 +34,8 @@ struct ContentView: View {
         }
     }
     
+    private var currentDate : Date = Date()
+    
     var body: some View {
         NavigationStack {
             VStack {
@@ -47,7 +49,7 @@ struct ContentView: View {
                     Spacer()
                     
                     Button(){
-                        createTask();
+                        CreateTask();
                     } label: {
                         Label("", systemImage: "plus.circle")
                             
@@ -77,7 +79,7 @@ struct ContentView: View {
                                                 .day()
                                             )
                                             .font(.subheadline)
-                                            .foregroundStyle(.secondary)
+                                            .foregroundStyle(currentDate > dueDate ? .red : .secondary)
                                         }
                                     }
                                     
@@ -122,10 +124,14 @@ struct ContentView: View {
             }
         }
         .navigationTitle("Tasks")
+        .onAppear{
+            ArchiveOldTasks()
+            DeleteExpiredTasks()
+        }
         
     }
     
-    func createTask(){
+    func CreateTask(){
         let task = TodoItem(
             title: "New Task",
             priority: 0
@@ -140,17 +146,59 @@ struct ContentView: View {
         }
     }
     
-    func getPriorityColor(priority: Int) -> Color{
-        switch priority {
-        case 1:
-            return .green
-        case 2:
-            return .yellow
-        case 3:
-            return .red
-        default:
-            return .white
+    func DeleteExpiredTasks(){
+        
+        for task in tasks {
+            //only delete completed tasks
+            
+            guard task.isCompleted else {continue}
+            
+            guard let dueDate = task.dueDate else {continue}
+            
+            guard let deletionDays = task.deletionDays else {continue}
+            
+            guard let deletionDate = Calendar.current.date(
+                byAdding: .day,
+                value: deletionDays,
+                to: dueDate
+            ) else {continue}
+            
+            if currentDate >= deletionDate {
+                modelContext.delete(task)
+            }
         }
+        
+        do {
+            try modelContext.save()
+        } catch {
+            print("Couldn't delete expired tasks")
+        }
+    }
+    
+    func ArchiveOldTasks() {
+        
+        for task in tasks {
+            guard let dueDate = task.dueDate else {continue}
+            
+            guard let expirationDays = task.expirationDays else {continue}
+            
+            guard let expirationDate = Calendar.current.date(
+                byAdding: .day,
+                value: expirationDays,
+                to: dueDate
+            ) else {continue}
+            
+            if currentDate >= expirationDate {
+                task.isArchived = true
+            }
+        }
+        
+        do {
+            try modelContext.save()
+        } catch {
+            print("Couldn't archive old tasks")
+        }
+        
     }
     
 }

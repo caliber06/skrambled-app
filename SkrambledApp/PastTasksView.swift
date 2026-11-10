@@ -34,11 +34,14 @@ struct PastTasksView : View{
                                 .foregroundStyle(.secondary)
                         }
                         
-                        if let completedDate = task.completedDate{
+                        if let completedDate = task.completedDate {
                             Text("Completed \(completedDate.formatted(date: .abbreviated, time: .shortened))")
                                 .font(.subheadline)
-                                .foregroundStyle(.green)
+                                .foregroundStyle(
+                                    task.dueDate.map { completedDate > $0 ? Color.red : Color.green } ?? .green
+                                )
                         }
+                        
                     }
                     
                     Spacer()
