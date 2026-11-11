@@ -47,7 +47,7 @@ struct ContentView: View {
                     .padding()
                     
                     Button("Test Notif"){
-                        NotificationManager.shared.ScheduleNotifications()
+                        NotificationManager.shared.ScheduleTestNotifications()
                     }
                     
                     Button(){
@@ -147,6 +147,7 @@ struct ContentView: View {
         
         do {
             try modelContext.save();
+            NotificationManager.shared.ScheduleNotifications(for: task)
         } catch {
             print("Failed to save new task: \(error)");
         }

@@ -44,6 +44,9 @@ final class TodoItem {
     var expirationDays: Int? //move to Past Tasks
     var deletionDays: Int? //fully delete the task
     
+    //notifications
+    var notifyMe: Bool = true;
+    
     init(
         title: String,
         notes: String = "",
@@ -52,7 +55,7 @@ final class TodoItem {
         taskType: String = "Task",
         dueDate: Date? = nil,
         hasSpecificTime: Bool = false,
-        
+        notifyMe: Bool = true
         
     ){
         self.id = UUID();
@@ -70,6 +73,8 @@ final class TodoItem {
         
         self.expirationDays = 15;
         self.deletionDays = 30;
+        
+        self.notifyMe = true;
     }
     
     func CompleteTask(){

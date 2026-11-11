@@ -68,6 +68,16 @@ struct EditTaskView : View {
                 
             }
             
+            Section("Notifications"){
+                Toggle(isOn: $currentTask.notifyMe){
+                    Text("Notify me")
+                    
+                    Text("You'll be notified daily, 1 hr, 15 min before the task is due")
+                }
+                .tint(.accentColor)
+                
+            }
+            
             Section("Task Expiry"){
                 
                 Picker("Move to Past Tasks after", selection:$currentTask.expirationDays){
