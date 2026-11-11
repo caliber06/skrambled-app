@@ -46,7 +46,9 @@ struct ContentView: View {
                     }
                     .padding()
                     
-                    Spacer()
+                    Button("Test Notif"){
+                        NotificationManager.shared.ScheduleNotifications()
+                    }
                     
                     Button(){
                         CreateTask();
@@ -127,6 +129,10 @@ struct ContentView: View {
         .onAppear{
             ArchiveOldTasks()
             DeleteExpiredTasks()
+            
+            NotificationManager.shared.RequestNotificationPermission()
+            
+            
         }
         
     }
