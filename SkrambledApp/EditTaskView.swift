@@ -49,12 +49,12 @@ struct EditTaskView : View {
             }
             
             Section("Date & Time"){
-                Toggle(isOn: $currentTask.hasSpecificTime){
+                Toggle(isOn: $currentTask.hasDueDate){
                     Text("Has due date")
                 }
                 .tint(.accentColor)
                 
-                if(currentTask.hasSpecificTime){
+                if(currentTask.hasDueDate){
                     DatePicker("Due Date", selection: Binding(
                         get: {
                             currentTask.dueDate ?? Date()
@@ -99,12 +99,14 @@ struct EditTaskView : View {
             
             Section("Task Management") {
                 Button("Mark as Complete") {
+                    NotificationManager.shared.CancelNotifications(for: currentTask)
                     currentTask.CompleteTask()
                     dismiss()
                 }
                 .tint(.green)
                 
                 Button("Delete Task", role: .destructive){
+                    NotificationManager.shared.CancelNotifications(for: currentTask)
                     modelContext.delete(currentTask)
                     dismiss()
                 }
@@ -113,6 +115,9 @@ struct EditTaskView : View {
             
         }
         .navigationTitle("Edit \(currentTask.title)")
+        .onDisappear {
+            NotificationManager.shared.ScheduleNotifications(for: currentTask)
+        }
     }
 }
 

@@ -74,7 +74,7 @@ class NotificationManager : NSObject, UNUserNotificationCenterDelegate {
             let content = UNMutableNotificationContent()
             content.title = task.title
             content.body = message
-            content.sound = .defaultCritical
+            content.sound = .default
             
             let trigger = UNTimeIntervalNotificationTrigger (
                 timeInterval: timeUntilNotification,
@@ -91,6 +91,14 @@ class NotificationManager : NSObject, UNUserNotificationCenterDelegate {
                 if let error = error {
                     print("Notification scheduling failed: \(error)")
                 }
+            }
+        }
+        
+        center.getPendingNotificationRequests { requests in
+            print("Pending notifications: \(requests.count)")
+
+            for request in requests {
+                print(request.identifier)
             }
         }
     }

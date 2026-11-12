@@ -7,6 +7,8 @@ struct MyApp: App {
         WindowGroup {
             ContentView()
         }
-        .modelContainer(for: TodoItem.self)
+        .modelContainer(
+            for: TodoItem.self
+        )
     }
 }

@@ -8,7 +8,7 @@ struct ContentView: View {
     private var tasks: [TodoItem]; //array of TodoItems
     
     private var sortedTasks: [TodoItem] {
-        tasks.filter{!$0.isCompleted || !$0.isArchived}
+        tasks.filter{!$0.isCompleted && !$0.isArchived}
             .sorted { first, second in
             
             //first sort by priority
@@ -53,7 +53,7 @@ struct ContentView: View {
                     Button(){
                         CreateTask();
                     } label: {
-                        Label("", systemImage: "plus.circle")
+                        Image(systemName: "plus.circle")
                             
                     }
                     .padding()
@@ -71,7 +71,7 @@ struct ContentView: View {
                                     Text(task.title)
                                         .font(.headline)
                                     
-                                    if(task.hasSpecificTime){
+                                    if(task.hasDueDate){
                                         if let dueDate = task.dueDate {
                                             Text(dueDate, format:
                                                 .dateTime
@@ -106,6 +106,9 @@ struct ContentView: View {
                         }
                         .swipeActions(edge: .trailing, allowsFullSwipe: false){
                             Button(role: .destructive){
+                                
+                                NotificationManager.shared.CancelNotifications(for: task)
+                                
                                 modelContext.delete(task)
                             } label: {
                                 Label("", systemImage: "trash")
@@ -113,6 +116,9 @@ struct ContentView: View {
                         }
                         .swipeActions(edge: .leading, allowsFullSwipe: false){
                             Button(){
+                                
+                                NotificationManager.shared.CancelNotifications(for: task)
+                                
                                 task.CompleteTask()
                             }label: {
                                 Label("", systemImage: "checkmark")
@@ -137,19 +143,31 @@ struct ContentView: View {
         
     }
     
-    func CreateTask(){
-        let task = TodoItem(
-            title: "New Task",
-            priority: 0
-        )
+    func CreateTask() {
+        print("Creating new task")
+
+        let task = TodoItem(title: "New Task", priority: 0)
+        modelContext.insert(task)
         
-        modelContext.insert(task);
-        
+        print("Inserted object: \(task.title)")
+        print("Has changes: \(modelContext.hasChanges)")
+
         do {
-            try modelContext.save();
-            NotificationManager.shared.ScheduleNotifications(for: task)
+            try modelContext.save()
+            
+            print("Has changes after save: \(modelContext.hasChanges)")
+            
+            
+
+            let descriptor = FetchDescriptor<TodoItem>()
+            let savedTasks = try modelContext.fetch(descriptor)
+
+            print("Task saved successfully")
+            print("Fetched tasks: \(savedTasks.count)")
+            print("Query tasks: \(tasks.count)")
+
         } catch {
-            print("Failed to save new task: \(error)");
+            print("SwiftData error: \(error)")
         }
     }
     
@@ -171,6 +189,9 @@ struct ContentView: View {
             ) else {continue}
             
             if currentDate >= deletionDate {
+                
+                NotificationManager.shared.CancelNotifications(for: task)
+                
                 modelContext.delete(task)
             }
         }
@@ -196,6 +217,9 @@ struct ContentView: View {
             ) else {continue}
             
             if currentDate >= expirationDate {
+                
+                NotificationManager.shared.CancelNotifications(for: task)
+                
                 task.isArchived = true
             }
         }

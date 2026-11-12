@@ -34,7 +34,7 @@ final class TodoItem {
     
     //scheduling
     var dueDate: Date?
-    var hasSpecificTime: Bool;
+    var hasDueDate: Bool;
     
     var isCompleted: Bool = false;
     var completedDate: Date? = nil;
@@ -54,7 +54,7 @@ final class TodoItem {
         priority: Int = 0,
         taskType: String = "Task",
         dueDate: Date? = nil,
-        hasSpecificTime: Bool = false,
+        hasDueDate: Bool = false,
         notifyMe: Bool = true
         
     ){
@@ -64,7 +64,7 @@ final class TodoItem {
         self.priority = priority;
         self.taskType = taskType;
         self.dueDate = dueDate;
-        self.hasSpecificTime = hasSpecificTime;
+        self.hasDueDate = hasDueDate;
         
         self.isCompleted = false;
         self.completedDate = nil;
