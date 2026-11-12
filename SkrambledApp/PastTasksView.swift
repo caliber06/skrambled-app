@@ -65,6 +65,7 @@ struct PastTasksView : View{
                     Button(){
                         task.isCompleted = false
                         task.completedDate = nil
+                        task.isArchived = false
                     }label: {
                         Label("", systemImage: "arrow.trianglehead.clockwise")
                     }
